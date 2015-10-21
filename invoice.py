@@ -24,7 +24,6 @@ class InvoiceReport(JasperReport):
         Invoice = pool.get('account.invoice')
 
         new_invoices = []
-        new_invoices_state = []
         invoice_reports_cache = []
         invoice_reports_format = []
         for invoice in Invoice.browse(ids):
@@ -33,28 +32,18 @@ class InvoiceReport(JasperReport):
                 invoice_reports_format.append(invoice.invoice_report_format)
             else:
                 new_invoices.append(invoice.id)
-                new_invoices_state.append(invoice.state)
         pages = len(invoice_reports_cache) or 1
 
         invoice_reports_format = list(set(invoice_reports_format))
-        new_invoices_state = list(set(new_invoices_state))
 
-        if (new_invoices_state and (len(new_invoices_state) > 1 or
-            new_invoices_state[0] not in ('posted', 'paid'))):
-            if (invoice_reports_cache and
-                len(invoice_reports_cache) != len(ids)):
-                raise UserError('Warning', 'When try to generate multiple '
-                    'reports at same time all them need to have the same '
-                    'state.')
-            elif invoice_reports_format and len(invoice_reports_format) != 1:
-                raise UserError('Warning', 'When try to generate multiple '
-                    'reports at same time all them need to be the same format.'
-                    ' E.g.: "pdf".')
+        if invoice_reports_format and len(invoice_reports_format) != 1:
+            raise UserError('Warning', 'When try to generate multiple '
+                'reports at same time all them need to be the same format.'
+                ' E.g.: "pdf".')
 
         if invoice_reports_cache and invoice_reports_format[0] == 'pdf':
             ndata = None
-            if (len(new_invoices_state) == 1 and
-                new_invoices_state[0] in ('posted', 'paid')):
+            if new_invoices:
                 ntype, ndata, npages = super(InvoiceReport, cls).render(
                     report, data, model, new_invoices)
             if ndata:
