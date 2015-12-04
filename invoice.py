@@ -41,7 +41,8 @@ class InvoiceReport(JasperReport):
                 'reports at same time all them need to be the same format.'
                 ' E.g.: "pdf".')
 
-        if invoice_reports_cache and invoice_reports_format[0] == 'pdf':
+        invoice_reports_format = invoice_reports_format[0]
+        if invoice_reports_cache and invoice_reports_format == 'pdf':
             ndata = None
             if new_invoices:
                 ntype, ndata, npages = super(InvoiceReport, cls).render(
