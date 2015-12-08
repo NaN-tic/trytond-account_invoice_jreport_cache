@@ -41,7 +41,8 @@ class InvoiceReport(JasperReport):
                 'reports at same time all them need to be the same format.'
                 ' E.g.: "pdf".')
 
-        invoice_reports_format = invoice_reports_format[0]
+        invoice_reports_format = (invoice_reports_format and
+            invoice_reports_format[0] or '')
         if invoice_reports_cache and invoice_reports_format == 'pdf':
             ndata = None
             if new_invoices:
