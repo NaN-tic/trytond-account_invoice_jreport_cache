@@ -72,8 +72,10 @@ class InvoiceReport(JasperReport):
 
         if len(ids) == 1:
             invoice = Invoice(ids[0])
-            if invoice.state in ('posted', 'paid') and invoice.type == 'out':
-                invoice.invoice_report_format = res[0]
-                invoice.invoice_report_cache = res[1]
-                invoice.save()
+            if (invoice.state in ('posted', 'paid')
+                    and invoice.type in ('out_invoice', 'out_credit_note')):
+                Invoice.write([Invoice(invoice.id)], {
+                    'invoice_report_format': res[0],
+                    'invoice_report_cache': buffer(res[1]),
+                    })
         return res
