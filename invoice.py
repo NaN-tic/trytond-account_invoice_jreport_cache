@@ -6,12 +6,26 @@ from trytond.modules.jasper_reports.jasper import JasperReport
 from trytond.exceptions import UserError
 from trytond.rpc import RPC
 
-__all__ = ['InvoiceReport']
-__metaclass__ = PoolMeta
+__all__ = ['Invoice', 'InvoiceReport']
+
+
+class Invoice:
+    __name__ = 'account.invoice'
+    __metaclass__ = PoolMeta
+
+    def print_invoice(self):
+        '''
+        Generate invoice report and store it in invoice_report field.
+        '''
+        if self.invoice_report_cache:
+            return
+        InvoiceReport = Pool().get('account.invoice.jreport', type='report')
+        InvoiceReport.execute([self.id], {})
 
 
 class InvoiceReport(JasperReport):
     __name__ = 'account.invoice.jreport'
+    __metaclass__ = PoolMeta
 
     @classmethod
     def __setup__(cls):
@@ -58,10 +72,8 @@ class InvoiceReport(JasperReport):
 
         if len(ids) == 1:
             invoice = Invoice(ids[0])
-            if (invoice.state in ('posted', 'paid')
-                    and invoice.type in ('out_invoice', 'out_credit_note')):
-                Invoice.write([Invoice(invoice.id)], {
-                    'invoice_report_format': res[0],
-                    'invoice_report_cache': buffer(res[1]),
-                    })
+            if invoice.state in ('posted', 'paid') and invoice.type == 'out':
+                invoice.invoice_report_format = res[0]
+                invoice.invoice_report_cache = res[1]
+                invoice.save()
         return res
