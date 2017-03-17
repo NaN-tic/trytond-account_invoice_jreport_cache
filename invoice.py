@@ -10,8 +10,8 @@ __all__ = ['Invoice', 'InvoiceReport']
 
 
 class Invoice:
-    __name__ = 'account.invoice'
     __metaclass__ = PoolMeta
+    __name__ = 'account.invoice'
 
     def print_invoice(self):
         '''
@@ -25,7 +25,6 @@ class Invoice:
 
 class InvoiceReport(JasperReport):
     __name__ = 'account.invoice.jreport'
-    __metaclass__ = PoolMeta
 
     @classmethod
     def __setup__(cls):
