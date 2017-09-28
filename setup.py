@@ -6,9 +6,11 @@ import re
 import os
 import ConfigParser
 
-MODULE = 'jasper_report_invoice_cache'
+MODULE = 'account_invoice_jreport_cache'
 PREFIX = 'nantic'
-MODULE2PREFIX = {}
+MODULE2PREFIX = {
+    'jasper_reports': 'trytonspain'
+}
 
 
 def read(fname):
@@ -51,7 +53,7 @@ setup(name='%s_%s' % (PREFIX, MODULE),
     version=version,
     description='',
     long_description=read('README'),
-    author='NaNÂ·tic',
+    author='NaN·tic',
     author_email='info@nan-tic.com',
     url='http://www.nan-tic.com/',
     download_url="https://bitbucket.org/nantic/trytond-%s" % MODULE,
