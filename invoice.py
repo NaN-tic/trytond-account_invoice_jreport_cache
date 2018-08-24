@@ -9,8 +9,7 @@ from trytond.rpc import RPC
 __all__ = ['Invoice', 'InvoiceReport']
 
 
-class Invoice:
-    __metaclass__ = PoolMeta
+class Invoice(metaclass=PoolMeta):
     __name__ = 'account.invoice'
 
     def print_invoice(self):
