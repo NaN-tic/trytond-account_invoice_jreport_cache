@@ -2,6 +2,7 @@
 # The COPYRIGHT file at the top level of this repository contains the full
 # copyright notices and license terms.
 from trytond.pool import Pool, PoolMeta
+from trytond.model import dualmethod
 from trytond.modules.jasper_reports.jasper import JasperReport
 from trytond.exceptions import UserError
 from trytond.rpc import RPC
@@ -12,14 +13,14 @@ __all__ = ['Invoice', 'InvoiceReport']
 class Invoice(metaclass=PoolMeta):
     __name__ = 'account.invoice'
 
-    def print_invoice(self):
-        '''
-        Generate invoice report and store it in invoice_report field.
-        '''
-        if self.invoice_report_cache:
-            return
+    @dualmethod
+    def print_invoice(cls, invoices):
+        # replace and render invoice jasper report
         InvoiceReport = Pool().get('account.invoice.jreport', type='report')
-        InvoiceReport.execute([self.id], {})
+        for invoice in invoices:
+            if invoice.invoice_report_cache:
+                return
+            InvoiceReport.execute([invoice.id], {})
 
 
 class InvoiceReport(JasperReport):
