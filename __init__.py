@@ -11,6 +11,3 @@ def register():
     Pool.register(
         invoice.InvoiceReport,
         module='account_invoice_jreport_cache', type_='report')
-    Pool.register(
-        invoice.RefreshInvoiceReport,
-        module='account_invoice_jreport_cache', type_='wizard')
