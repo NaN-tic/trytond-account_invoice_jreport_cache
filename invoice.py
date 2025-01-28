@@ -7,6 +7,8 @@ from trytond.modules.jasper_reports.jasper import JasperReport
 from trytond.exceptions import UserError
 from trytond.rpc import RPC
 
+__all__ = ['Invoice', 'InvoiceReport']
+
 
 class Invoice(metaclass=PoolMeta):
     __name__ = 'account.invoice'
@@ -74,12 +76,3 @@ class InvoiceReport(JasperReport):
                 invoice.invoice_report_cache = res[1]
                 invoice.save()
         return res
-
-
-class RefreshInvoiceReport(metaclass=PoolMeta):
-    __name__ = 'account.invoice.refresh_invoice_report'
-
-    @classmethod
-    def __setup__(cls):
-        super().__setup__()
-        cls.print_.report_name = 'account.invoice.jreport'
