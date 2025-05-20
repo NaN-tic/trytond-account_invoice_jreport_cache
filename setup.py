@@ -9,9 +9,7 @@ from configparser import ConfigParser
 
 MODULE = 'account_invoice_jreport_cache'
 PREFIX = 'nantic'
-MODULE2PREFIX = {
-    'jasper_reports': 'trytonspain',
-    }
+MODULE2PREFIX = {}
 
 
 def read(fname):
@@ -48,20 +46,18 @@ for dep in info.get('depends', []):
         requires.append(get_require_version('%s_%s' % (prefix, dep)))
 requires.append(get_require_version('trytond'))
 
-tests_require = []
+tests_require = [
+    get_require_version('proteus'),
+]
+
 series = '%s.%s' % (major_version, minor_version)
 if minor_version % 2:
-    branch = 'master'
+    branch = 'default'
 else:
     branch = series
-dependency_links = [
-    ('git+https://github.com/trytonspain/'
-        'trytond-jasper_reports@%(branch)s'
-        '#egg=trytonspain-jasper_reports-%(series)s' % {
-            'branch': branch,
-            'series': series,
-            }),
-    ]
+
+dependency_links = []
+
 if minor_version % 2:
     # Add development index for testing with proteus
     dependency_links.append('https://trydevpi.tryton.org/')
@@ -73,7 +69,7 @@ setup(name='%s_%s' % (PREFIX, MODULE),
     author='NaN·tic',
     author_email='info@nan-tic.com',
     url='http://www.nan-tic.com/',
-    download_url="https://github.com/NaN-tic/trytond-%s" % MODULE,
+    download_url="https://bitbucket.org/nantic/trytond-%s" % MODULE,
     package_dir={'trytond.modules.%s' % MODULE: '.'},
     packages=[
         'trytond.modules.%s' % MODULE,
