@@ -7,6 +7,7 @@ from . import invoice
 def register():
     Pool.register(
         invoice.Invoice,
+        invoice.InvoiceReportRevision,
         module='account_invoice_jreport_cache', type_='model')
     Pool.register(
         invoice.InvoiceReport,
