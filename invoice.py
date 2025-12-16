@@ -6,8 +6,8 @@ from trytond.model import dualmethod
 from trytond.modules.jasper_reports.jasper import JasperReport
 from trytond.exceptions import UserError
 from trytond.rpc import RPC
-
-__all__ = ['Invoice', 'InvoiceReport']
+from genshi.template.text import TextTemplate
+from trytond.tools import slugify
 
 
 class Invoice(metaclass=PoolMeta):
@@ -76,3 +76,35 @@ class InvoiceReport(JasperReport):
                 invoice.invoice_report_cache = res[1]
                 invoice.save()
         return res
+
+
+class InvoiceReportRevision(metaclass=PoolMeta):
+    __name__ = 'account.invoice.report.revision'
+
+    # Overwrite get_filename method because try to search ActionReport
+    # by "account.invoice"
+    @classmethod
+    def get_filename(cls, revisions, name):
+        pool = Pool()
+        ActionReport = pool.get('ir.action.report')
+
+        action_report, = ActionReport.search([
+                ('report_name', '=', 'account.invoice.jreport'),
+                ], limit=1)
+
+        action_report_name = action_report.name[:100]
+        if action_report.record_name:
+            template = TextTemplate(action_report.record_name)
+        else:
+            template = None
+        filenames = {}
+        for revision in revisions:
+            invoice = revision.invoice
+            if template:
+                record_name = template.generate(record=invoice).render()
+            else:
+                record_name = invoice.rec_name
+            filename = '-'.join([action_report_name, record_name])
+            filenames[revision.id] = (
+                f'{slugify(filename)}.{revision.invoice_report_format}')
+        return filenames
